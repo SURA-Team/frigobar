@@ -85,6 +85,24 @@ jobs:
         if: steps.escopo.outputs.somente_conteudo != 'true'
         run: npm run test:e2e
 
+      - name: Tamanho do JS da página pública (≤ 100 KB gzip)
+        if: steps.escopo.outputs.somente_conteudo != 'true'
+        run: npm run size
+
+      # Acessibilidade = 100 bloqueia; desempenho ≥ 90 é aviso (varia nos runners do GitHub).
+      - name: Lighthouse (celular 360px)
+        if: steps.escopo.outputs.somente_conteudo != 'true'
+        run: npm run lighthouse
+
+      - name: Relatório do Lighthouse
+        if: always() && steps.escopo.outputs.somente_conteudo != 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse
+          path: .lighthouseci
+          retention-days: 7
+          if-no-files-found: ignore
+
       - name: Relatório do Playwright
         if: failure() && steps.escopo.outputs.somente_conteudo != 'true'
         uses: actions/upload-artifact@v4

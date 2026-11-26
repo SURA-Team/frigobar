@@ -39,3 +39,10 @@ cores, ícones, fotos) são editáveis por administradores.
 - Edição: Decap CMS em `/admin/` com `editorial_workflow` (rascunho = PR); login GitHub via
   Cloudflare Worker OAuth. Preview do CMS usa os mesmos componentes da página pública.
 - Mídia com caminhos relativos (`uploads/...`) por causa do base path configurável.
+- Regras de formato (extensões, telefone, e-mail, ramal) ficam em `PADROES` no schema e são
+  importadas pela config do CMS: não duplique regex.
+- Testes nunca leem `content/` (editado pelo hotel): usam `tests/fixtures/` via
+  `FRIGOBAR_CONTENT_DIR` / `FRIGOBAR_UPLOADS_DIR`. O CI tem caminho rápido para PRs só de conteúdo.
+- CSP só na página pública e só no build (`scripts/vite-plugin-csp.ts`). JS da página pública
+  ≤ 100 KB gzip (`npm run size`).
+- Resultados de validação e pendências manuais: `specs/001-pagina-publica-frigobar/validacao.md`.

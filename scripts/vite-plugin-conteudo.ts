@@ -4,7 +4,7 @@
  * o conteúdo já foi validado por `npm run validate` e é reparseado aqui, em Node.
  * Também preenche título, descrição e theme-color do HTML (nada fixo no código).
  */
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import type { Plugin } from 'vite';
 import {
@@ -15,6 +15,7 @@ import {
   temaSchema,
   type Conteudo,
 } from '../src/content/schema';
+import type { ImageManifest } from '../src/images/manifest';
 
 const ID_VIRTUAL = 'virtual:conteudo';
 const ID_RESOLVIDO = `\0${ID_VIRTUAL}`;
@@ -52,12 +53,36 @@ export function carregarConteudo(dirConteudo: string): Conteudo {
   return { site, tema, catalogo };
 }
 
+const ARQUIVO_MANIFESTO = path.resolve('src/generated/image-manifest.json');
+
+/**
+ * `<link rel="preload">` da imagem do topo (capa ou, sem capa, o logotipo), que é o elemento de
+ * LCP. Sem isso o navegador só descobre a imagem depois de executar o JS.
+ */
+function preloadImagemDoTopo(site: Conteudo['site'], base: string): string {
+  if (!existsSync(ARQUIVO_MANIFESTO)) return '';
+  const manifesto = JSON.parse(readFileSync(ARQUIVO_MANIFESTO, 'utf8')) as ImageManifest;
+  const entrada = manifesto[site.fotoCapa ?? site.logo];
+  if (!entrada || entrada.variantes.length === 0) return '';
+  const url = (u: string) => escaparHtml(`${base}${u}`);
+  const maior = entrada.variantes[entrada.variantes.length - 1]!;
+  const srcset = entrada.variantes.map((v) => `${url(v.url)} ${v.largura}w`).join(', ');
+  const atributos = site.fotoCapa
+    ? ` imagesrcset="${srcset}" imagesizes="(max-width: 640px) 100vw, 640px"`
+    : '';
+  return `<link rel="preload" as="image" href="${url(maior.url)}"${atributos} fetchpriority="high" />`;
+}
+
 export function conteudoPlugin(dirConteudo: string): Plugin {
   const arquivos = ['site.json', 'theme.json', 'catalog.json'].map((n) =>
     path.join(dirConteudo, n),
   );
+  let base = '/';
   return {
     name: 'frigobar-conteudo',
+    configResolved(config) {
+      base = config.base;
+    },
     resolveId(id) {
       return id === ID_VIRTUAL ? ID_RESOLVIDO : undefined;
     },
@@ -78,7 +103,8 @@ export function conteudoPlugin(dirConteudo: string): Plugin {
       const { site, tema } = carregarConteudo(dirConteudo);
       return html
         .replaceAll('%NOME_HOTEL%', escaparHtml(site.nomeHotel))
-        .replaceAll('%COR_PRINCIPAL%', escaparHtml(tema.cores.principal));
+        .replaceAll('%COR_PRINCIPAL%', escaparHtml(tema.cores.principal))
+        .replace('<!-- %PRELOAD_IMAGEM% -->', preloadImagemDoTopo(site, base));
     },
   };
 }
