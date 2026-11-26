@@ -33,6 +33,6 @@
 
 - Clarificações resolvidas em 2026-11-26: FR-012 → um único hotel; FR-020 → rascunho com
   pré-visualização, publicado pelo próprio administrador.
-- Formatos de foto (JPEG, PNG, HEIC/WebP) e WCAG 2.1 AA são citados como requisitos visíveis ao
+- Formatos de foto (JPEG, PNG, WebP; HEIC convertido pelo celular) e WCAG 2.1 AA são citados como requisitos visíveis ao
   usuário/padrão de mercado, não como escolha de implementação.
 - Items marked incomplete require spec updates before `/speckit-clarify` or `/speckit-plan`

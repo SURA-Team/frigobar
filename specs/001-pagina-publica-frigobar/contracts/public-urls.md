@@ -6,8 +6,8 @@
 | URL | Público | Comportamento |
 |-----|---------|---------------|
 | `<base>` | Hóspede | Página do frigobar (FR-001 a FR-012) |
-| `<base>#cat/<slug-categoria>` | Hóspede | Rola até a categoria |
-| `<base>#item/<slug-item>` | Hóspede | Abre o detalhe do item; "voltar" fecha (FR-004b). Slug inexistente → página normal, sem erro |
+| `<base>#cat/<slug-categoria>` | Hóspede | Rola até a categoria. A seção tem `id="cat/<slug>"`; o código a localiza com `getElementById` |
+| `<base>#item/<slug-item>` | Hóspede | Abre o detalhe do item; "voltar" fecha (FR-004b). Aberto direto (link ou nova aba), "voltar" fecha o detalhe e permanece em `<base>`. Slug inexistente → página normal, sem erro |
 | `<base>admin/` | Administrador | Decap CMS (login GitHub) |
 | `<base>admin/qrcode.html` | Administrador | Gerador de QR code (FR-023). Não exige login: o QR code só contém a URL pública |
 

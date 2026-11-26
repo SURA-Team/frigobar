@@ -68,6 +68,15 @@ conseguem salvar/publicar.
 **Pré-requisito operacional**: cada administrador precisa de uma conta GitHub e ser adicionado
 como colaborador com permissão de escrita no repositório `SURA-Team/frigobar`.
 
+**URL do Worker**: não fica fixada no código. O build lê `VITE_CMS_AUTH_URL`, que o deploy
+preenche a partir da variável de repositório `CMS_AUTH_URL`. Sem ela, `/admin/` mostra uma
+mensagem dizendo que o login ainda não foi configurado, em vez de falhar sem explicação.
+
+**Modo local**: `npm run cms:local` usa `decap-server` com `local_backend` e `publish_mode`
+simples (salvar grava direto em `content/`), porque o servidor local não reproduz o fluxo de
+rascunho com Pull Requests. Serve para testar formulários, widgets e pré-visualização; o fluxo
+de rascunho e publicação só é validado com o backend GitHub.
+
 ---
 
 ## R3. Hospedagem, deploy e endereço
@@ -89,10 +98,18 @@ GitHub Pages e eles adicionariam outra conta para administrar).
 
 **Decisão**: Três arquivos JSON em `content/` — `site.json` (textos e contatos), `theme.json`
 (cores e fontes) e `catalog.json` (categorias com itens aninhados). Um **schema Zod** único em
-`src/content/schema.ts` gera os tipos TypeScript e valida o conteúdo:
-1. no CMS (validações de campo + widgets customizados) — bloqueia salvar;
-2. no build (`scripts/validate-content.ts`, executado antes do `vite build` e no CI) — se o
-   conteúdo publicado for inválido, o deploy falha e o site continua na versão anterior.
+`src/content/schema.ts` gera os tipos TypeScript e valida o conteúdo em três camadas:
+1. **no CMS, ao salvar**: validações de campo (obrigatório, tamanho, `pattern` de extensão de
+   arquivo, `max_file_size`) e widgets customizados com `isValid` (contraste, fonte própria);
+2. **na pré-visualização**: o conteúdo mesclado do rascunho passa pelo schema completo e pelas
+   regras de contraste; havendo erro, um aviso vermelho no topo lista o que corrigir (cobre
+   regras que o Decap não valida sozinho, como nome de categoria repetido);
+3. **no CI do Pull Request do rascunho** (`scripts/validate-content.ts` + build): a `main` tem
+   proteção de branch exigindo o CI aprovado, então o "Publicar" do Decap falha enquanto o
+   rascunho for inválido, e conteúdo inválido nunca chega ao deploy.
+
+Assim nenhuma publicação inválida "parece publicada": ou é recusada com mensagem (FR-018), ou
+não acontece.
 
 **Racional**:
 - Catálogo em um único arquivo permite que a pré-visualização mostre a página completa e que a
@@ -120,8 +137,14 @@ deslocar o layout. Limite de upload de 10 MB configurado no media library do Dec
 **Racional**: fotos de celular (3–8 MB) viram ~40–120 KB por variante; atende Princípio V e
 SC-001. Otimizar no build mantém o CMS simples.
 
-**Sobre HEIC**: iOS Safari converte HEIC para JPEG ao enviar por `<input type="file">`; o build
-aceita JPEG, PNG e WebP e falha com mensagem clara para outros formatos.
+**Sobre HEIC**: iOS Safari converte HEIC para JPEG ao enviar por `<input type="file">`, então o
+sistema aceita apenas JPEG, PNG e WebP (FR-019). Outros formatos são recusados já ao salvar no
+CMS (`pattern` de extensão no campo de imagem) e, como segunda barreira, pela validação do CI.
+
+**Saída única em `_img/`**: todas as imagens usadas pela página pública, inclusive o logotipo
+SVG (copiado sem conversão), são emitidas em `public/_img/` com nome por hash. A página nunca
+referencia `uploads/` diretamente, então a origem das imagens pode ser trocada pelo conteúdo de
+teste (R13) sem servir outra pasta.
 
 **Alternativas consideradas**: `vite-imagetools` (exige imports estáticos, mas as imagens vêm do
 JSON); serviço de imagens externo (Cloudinary — custo/conta extra).
@@ -178,8 +201,12 @@ Vegano (`Vegan`), Novo (`Sparkles`).
 **Decisão**: Sem roteador. O detalhe é um `<dialog>` nativo; ao abrir, faz `history.pushState`
 com hash `#item/<slug>`; o evento `popstate` (botão voltar) fecha o diálogo; Esc e botão fechar
 chamam `history.back()`. A posição de rolagem é preservada porque a lista nunca é desmontada.
-Acessar uma URL com `#item/<slug>` abre o detalhe diretamente. Atalhos de categoria usam
-âncoras `#cat/<slug>` com rolagem suave (respeitando `prefers-reduced-motion`).
+Acessar uma URL com `#item/<slug>` abre o detalhe diretamente: nesse caso o app primeiro troca a
+entrada atual por `<base>` (`replaceState`) e depois empilha `#item/<slug>` (`pushState`), para
+que "voltar" feche o detalhe e mantenha o hóspede na página em vez de sair do site. Atalhos de
+categoria usam âncoras `#cat/<slug>` com rolagem suave (respeitando `prefers-reduced-motion`);
+como o `id` contém `/`, o código sempre localiza as seções com `getElementById` (nunca seletor
+CSS `#cat/...`).
 
 **Alternativas consideradas**: React Router (dependência desnecessária para uma página).
 
@@ -203,15 +230,17 @@ futura se o guia não atingir o SC-006 nos testes com funcionários.
 ## R11. Edições simultâneas (FR-022)
 
 **Decisão**: Cada entrada (Textos e contatos / Identidade visual / Catálogo) tem seu próprio
-rascunho. Rascunhos de entradas diferentes não colidem. Se dois rascunhos da **mesma** entrada
-forem publicados, o segundo merge entra em conflito e o Decap exibe erro de publicação — nada é
-sobrescrito na `main`.
+rascunho. Rascunhos de entradas diferentes não colidem. Se a `main` mudou desde a criação do
+rascunho e as alterações colidem, o merge do Pull Request falha e o Decap exibe erro de
+publicação — nada é sobrescrito na `main` (FR-022, primeira parte).
 
-**Risco aceito**: dois administradores editando o **mesmo rascunho** ao mesmo tempo
-compartilham a mesma branch; o último a salvar prevalece dentro do rascunho, mas ambos os
-salvamentos ficam no histórico da branch (recuperáveis). Mitigação: guia do administrador
-orienta a avisar a equipe antes de editar o catálogo; com até 5 administradores o risco é baixo.
-Reavaliar se ocorrer na prática.
+Dois administradores editando o **mesmo rascunho** compartilham a mesma branch: o último a
+salvar prevalece dentro do rascunho, e cada salvamento é um commit na branch, recuperável no
+histórico do Pull Request (FR-022, segunda parte, conforme a spec). O guia do administrador
+orienta a avisar a equipe antes de editar o catálogo; com até 5 administradores isso basta.
+
+**Alternativa rejeitada**: trava de edição ("fulano está editando") — exigiria estado
+compartilhado fora do Git (fere Princípios II e VI).
 
 ---
 
@@ -232,11 +261,18 @@ Link para a página aparece na descrição da coleção "Textos e contatos" no C
 - **Playwright** (viewport 360×740, Chromium) + **@axe-core/playwright**: jornadas da US1
   (carregar, atalho de categoria, abrir/fechar detalhe com voltar, item oculto, aviso de álcool,
   contatos) e verificação de acessibilidade sem violações.
-- **Lighthouse CI** (não bloqueante no início) para acompanhar Performance ≥ 90.
+- **Lighthouse CI**: Accessibility = 100 bloqueante; Performance ≥ 90 como aviso (a nota de
+  desempenho varia nos runners do GitHub; a meta é conferida no celular real na validação final).
 - **ESLint** (typescript-eslint) + **Prettier** + `tsc --noEmit`.
+- **Conteúdo de teste congelado**: testes unitários e e2e usam `tests/fixtures/content/` e
+  `tests/fixtures/uploads/`, nunca o `content/` real. Os scripts e o Vite leem
+  `FRIGOBAR_CONTENT_DIR` e `FRIGOBAR_UPLOADS_DIR` (padrão `content` e `public/uploads`). Assim a
+  primeira edição do hotel não quebra os testes, e o CI dos rascunhos do CMS só falha quando o
+  conteúdo editado é de fato inválido (`npm run validate` sobre o `content/` real).
 
 CI (`.github/workflows/ci.yml`) roda em PRs — inclusive nos PRs de rascunho do CMS — com os
 gates da constituição: lint, type-check, validação de conteúdo, testes unitários, build e e2e.
+A `main` tem proteção de branch exigindo esse CI aprovado antes do merge (ver R4).
 
 ---
 

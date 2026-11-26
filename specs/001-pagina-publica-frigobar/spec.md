@@ -128,8 +128,9 @@ diferentes e confirmar que ambos abrem a página pública.
 
 **Acceptance Scenarios**:
 
-1. **Given** um administrador autenticado, **When** ele solicita o QR code, **Then** recebe uma
-   imagem para impressão que, lida pela câmera do celular, abre a página pública.
+1. **Given** um administrador na área de administração, **When** ele abre o gerador de QR code,
+   **Then** recebe uma imagem para impressão que, lida pela câmera do celular, abre a página
+   pública. O gerador não exige login, pois o QR code contém apenas o endereço público.
 2. **Given** que o endereço definitivo da página ainda não foi configurado, **When** o
    administrador solicita o QR code, **Then** o sistema avisa que o endereço é provisório e que
    QR codes impressos com ele poderão precisar ser substituídos.
@@ -152,8 +153,13 @@ diferentes e confirmar que ambos abrem a página pública.
 - **Fonte enviada inválida, acima de 2 MB ou sem acentos do português**: o envio é recusado com
   mensagem clara (ou, se faltarem acentos, o administrador é avisado na pré-visualização antes de
   publicar).
-- **Dois administradores editando ao mesmo tempo**: nenhuma alteração é perdida silenciosamente;
-  quem publicar por último é avisado do conflito.
+- **Dois administradores editando ao mesmo tempo**: nenhuma alteração publicada é perdida
+  silenciosamente; quem publicar por último é avisado do conflito. Se ambos editarem o mesmo
+  rascunho, o último salvamento prevalece no rascunho, e o anterior continua recuperável no
+  histórico.
+- **Conteúdo inválido no momento de publicar** (ex.: nomes de categoria repetidos, arquivo fora
+  do formato): a publicação é recusada, a página pública continua na versão anterior e a
+  pré-visualização indica o que corrigir.
 - **Área de administração indisponível**: a página pública continua exibindo a última versão
   publicada normalmente.
 - **QR code lido em computador ou tablet**: a página continua legível, centralizada e sem
@@ -228,16 +234,20 @@ diferentes e confirmar que ambos abrem a página pública.
 - **FR-018**: O sistema MUST validar o conteúdo antes de publicar — campos obrigatórios (nome do
   item, preço maior ou igual a zero, nome da categoria) e contraste mínimo entre texto e fundo — e
   bloquear a publicação com mensagens claras indicando o que corrigir.
-- **FR-019**: O sistema MUST aceitar fotos nos formatos comuns de celular (JPEG, PNG, HEIC/WebP
-  quando suportado) de até 10 MB e exibi-las ao hóspede otimizadas para celular.
+- **FR-019**: O sistema MUST aceitar fotos JPEG, PNG ou WebP de até 10 MB e exibi-las ao
+  hóspede otimizadas para celular. Fotos HEIC do iPhone MUST funcionar no envio pelo navegador
+  do celular (que as converte para JPEG); arquivos em outros formatos MUST ser recusados com
+  mensagem indicando os formatos aceitos.
 - **FR-020**: Alterações MUST ficar em rascunho até serem publicadas. O administrador MUST
   poder pré-visualizar a página exatamente como o hóspede a verá antes de publicar, e o próprio
   administrador publica, sem aprovação de terceiros. Rascunhos não publicados MUST NOT aparecer
   na página pública.
 - **FR-021**: O sistema MUST manter histórico de todas as alterações publicadas (quem, quando,
   o quê) e permitir restaurar qualquer versão anterior.
-- **FR-022**: O sistema MUST impedir que alterações simultâneas de dois administradores se
-  sobrescrevam silenciosamente.
+- **FR-022**: Uma publicação MUST NOT sobrescrever silenciosamente outra: se a versão publicada
+  mudou desde que o rascunho foi iniciado e as alterações colidem, a publicação MUST ser
+  recusada com aviso. Dentro de um mesmo rascunho, o último salvamento prevalece, mas todo
+  salvamento MUST ficar no histórico e poder ser recuperado.
 - **FR-023**: O sistema MUST permitir baixar o QR code da página pública em resolução adequada
   para impressão e avisar quando o endereço da página ainda for provisório.
 

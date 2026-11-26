@@ -29,7 +29,8 @@ Zod 4 (schema de conteúdo), lucide-react (ícones), @fontsource/* (8 fontes pad
 de dados e o histórico). Sem banco de dados.
 
 **Testing**: Vitest + Testing Library (unitários/componentes), Playwright + @axe-core/playwright
-(e2e e acessibilidade em 360×740), Lighthouse CI (desempenho, não bloqueante no início)
+(e2e e acessibilidade em 360×740) sobre conteúdo de teste congelado em `tests/fixtures/`,
+Lighthouse CI (acessibilidade bloqueante; desempenho como aviso)
 
 **Target Platform**: Navegadores móveis modernos (Safari iOS 16+, Chrome Android 2 últimas
 versões); desktop funcional. Hospedagem: GitHub Pages.
@@ -54,7 +55,7 @@ no total); ≤ 5 administradores; tráfego de dezenas a centenas de acessos/dia
 |---|---|---|
 | I. Spec antes de código | Spec + clarificações aprovadas; plano e tarefas antes de implementar | ✅ |
 | II. Estático e custo zero | GitHub Pages + Actions; único serviço externo é o Worker OAuth gratuito, justificado em [research.md R2](research.md) e em Complexity Tracking. Se cair, só o login do admin é afetado | ✅ (justificado) |
-| III. Conteúdo separado do código | Todo conteúdo em `content/*.json` validado por schema Zod no CMS e no build; tema aplicado via variáveis CSS | ✅ |
+| III. Conteúdo separado do código | Todo conteúdo em `content/*.json` validado por schema Zod no CMS, na pré-visualização e no CI (proteção de branch impede publicar conteúdo inválido); tema aplicado via variáveis CSS | ✅ |
 | IV. Edição sem programar | Decap CMS com formulários em português; histórico via PRs; restauração pelo botão "Revert" do GitHub com guia ([R10](research.md)); acesso só para colaboradores; segredo OAuth só no Worker | ✅ |
 | V. Mobile-first, rápido, acessível | Layout 360px+, imagens WebP responsivas geradas no build, fontes só as selecionadas com `swap`, contraste bloqueante, axe no e2e | ✅ |
 | VI. Simplicidade | Sem roteador, sem gerenciador de estado, sem backend; cada dependência justificada em research.md | ✅ |
@@ -136,10 +137,14 @@ scripts/
 └── optimize-images.ts        # sharp → WebP 400/800/1600 + manifesto
 
 tests/
-├── unit/                     # schema, contrast, format, derive, componentes
+├── fixtures/                 # Conteúdo de teste congelado (nunca editado pelo CMS)
+│   ├── content/              # site.json, theme.json, catalog.json
+│   └── uploads/              # imagens referenciadas pelos fixtures
+├── unit/                     # schema, contrast, format, derive, validate-content, componentes
 └── e2e/                      # jornadas US1 + axe (Playwright)
 
 docs/
+├── configuracao-cms.md       # Configuração única: OAuth, Worker, Pages, proteção de branch
 └── guia-administrador.md     # Passo a passo para não técnicos (editar, publicar, reverter)
 
 .github/workflows/
@@ -157,7 +162,8 @@ pré-visualização do CMS seja idêntica à página do hóspede. O bundle do De
 | Risco | Impacto | Mitigação |
 |---|---|---|
 | Decap ainda sem React 19 | Ficamos em React 18.3 | Sem impacto funcional; reavaliar quando Decap suportar |
-| Dois administradores no **mesmo** rascunho ao mesmo tempo ([R11](research.md)) | Último salvamento prevalece dentro do rascunho (recuperável no histórico) | Guia orienta avisar a equipe; ≤ 5 admins; reavaliar se ocorrer |
+| Dois administradores no **mesmo** rascunho ao mesmo tempo ([R11](research.md)) | Último salvamento prevalece dentro do rascunho (recuperável no histórico, como prevê o FR-022) | Guia orienta avisar a equipe; ≤ 5 admins |
+| Conteúdo inválido publicado pelo CMS ([R4](research.md)) | Deploy falharia e o site ficaria na versão anterior sem aviso | Validação no CMS + aviso na pré-visualização + proteção de branch exigindo CI antes do merge |
 | Restauração via GitHub "Revert" pode ser difícil para não técnicos | SC-006 (≤ 5 min) não atingido | Guia com capturas; validar com funcionário; se falhar, spec de página "Histórico" própria |
 | Administradores precisam de conta GitHub | Atrito no onboarding | Guia de criação de conta; é um passo único |
 | Fotos acumulam no repositório | Repo cresce com o tempo | Otimização no build não altera originais; limite de 10 MB por foto; revisar se passar de 500 MB |
