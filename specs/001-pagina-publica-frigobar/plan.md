@@ -63,7 +63,7 @@ no total); ≤ 5 administradores; tráfego de dezenas a centenas de acessos/dia
 | Restrição: estabilidade do QR | `urlPublica` + `enderecoDefinitivo` com aviso no gerador de QR | ✅ |
 | Restrição: repositório público | Nenhum dado pessoal; segredos fora do repo | ✅ |
 | Fluxo: gates de CI | lint, type-check, testes, validação de schema, build e e2e em todo PR (inclusive PRs do CMS) | ✅ |
-| Testes obrigatórios | Validação de conteúdo/tema e componentes dinâmicos cobertos por Vitest/Playwright | ✅ |
+| Testes obrigatórios | Schema, contraste, `validate-content`, widgets com `isValid` (paleta e fonte), `errosDoRascunho` e todos os componentes que exibem conteúdo (Vitest); jornadas US1 e QR code (Playwright) | ✅ |
 
 **Re-check pós-design (Phase 1)**: ✅ sem novas violações. Riscos registrados abaixo.
 

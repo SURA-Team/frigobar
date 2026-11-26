@@ -141,10 +141,15 @@ SC-001. Otimizar no build mantém o CMS simples.
 sistema aceita apenas JPEG, PNG e WebP (FR-019). Outros formatos são recusados já ao salvar no
 CMS (`pattern` de extensão no campo de imagem) e, como segunda barreira, pela validação do CI.
 
-**Saída única em `_img/`**: todas as imagens usadas pela página pública, inclusive o logotipo
-SVG (copiado sem conversão), são emitidas em `public/_img/` com nome por hash. A página nunca
-referencia `uploads/` diretamente, então a origem das imagens pode ser trocada pelo conteúdo de
-teste (R13) sem servir outra pasta.
+**Saída única em `_img/` para imagens**: todas as imagens usadas pela página pública, inclusive
+o logotipo SVG (copiado sem conversão), são emitidas em `public/_img/` com nome por hash. A
+página nunca referencia imagens em `uploads/` diretamente, então a origem das imagens pode ser
+trocada pelo conteúdo de teste (R13) sem servir outra pasta. Fontes próprias continuam servidas
+de `uploads/`; por isso o conteúdo de teste usa só fontes padrão.
+
+**Extensões validadas no schema**: a regra de formato (JPEG/PNG/WebP, SVG só no logotipo,
+WOFF2/WOFF/TTF/OTF nas fontes) fica no schema Zod, para aparecer também no aviso da
+pré-visualização; o script de validação do build cuida de existência e tamanho dos arquivos.
 
 **Alternativas consideradas**: `vite-imagetools` (exige imports estáticos, mas as imagens vêm do
 JSON); serviço de imagens externo (Cloudinary — custo/conta extra).
