@@ -10,3 +10,7 @@ interface ImportMetaEnv {
   /** URL do Worker OAuth do CMS (variável de repositório CMS_AUTH_URL). */
   readonly VITE_CMS_AUTH_URL?: string;
 }
+
+declare module 'decap-cms-locales' {
+  export const pt: Record<string, unknown>;
+}
