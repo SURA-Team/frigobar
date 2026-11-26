@@ -277,7 +277,12 @@ Link para a página aparece na descrição da coleção "Textos e contatos" no C
 
 CI (`.github/workflows/ci.yml`) roda em PRs — inclusive nos PRs de rascunho do CMS — com os
 gates da constituição: lint, type-check, validação de conteúdo, testes unitários, build e e2e.
-A `main` tem proteção de branch exigindo esse CI aprovado antes do merge (ver R4).
+A `main` tem proteção de branch exigindo esse CI aprovado antes do merge (ver R4), sem
+aprovações obrigatórias (FR-020). Para não atrasar a publicação (SC-003), o job `ci` tem um
+**caminho rápido**: PRs que só alteram `content/` e `public/uploads/` (os rascunhos do CMS)
+rodam apenas instalação, validação e build (≤ 2 min); e2e, lint e testes unitários rodam só
+quando há mudança de código. É um único job com passos condicionais, não um filtro `paths` no
+gatilho, porque um check obrigatório que não roda ficaria pendente e travaria o merge.
 
 ---
 

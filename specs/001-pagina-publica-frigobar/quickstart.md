@@ -71,7 +71,8 @@ Esperado: todos terminam com código 0.
 
 1. Entre em `<base>admin/` com uma conta GitHub colaboradora.
 2. Altere um preço → salve → o rascunho aparece no "Workflow" e um PR é aberto no GitHub.
-3. Mude para "Pronto" → "Publicar" → o CI e o deploy rodam; em ≤ 10 min o preço novo aparece em
+3. Mude para "Pronto" → aguarde o check `ci` do PR ficar verde (caminho rápido, ≤ 2 min, pois o
+   PR só altera `content/`) → "Publicar" → o deploy roda; em ≤ 10 min o preço novo aparece em
    `<base>` (SC-004).
 4. No GitHub, abra o PR mesclado → "Revert" → "Merge" → o preço antigo volta (SC-006).
 5. Crie um rascunho inválido (ex.: categorias com nome repetido) e tente "Publicar" → o Decap
@@ -101,5 +102,6 @@ Esperado: todos terminam com código 0.
 4. Repositório → Settings → **Pages** → Source: GitHub Actions. Variável `PAGES_BASE_PATH`
    (`/frigobar/` ou `/` com domínio próprio).
 5. Repositório → Settings → **Branches** (ou Rulesets) → regra para `main`: exigir Pull Request
-   e o status check do CI aprovado antes do merge.
+   e o status check `ci` aprovado antes do merge, **sem** aprovações obrigatórias (desmarcar
+   "Require approvals" — o administrador publica sozinho, FR-020).
 6. Adicionar cada administrador como colaborador com permissão **Write**.
