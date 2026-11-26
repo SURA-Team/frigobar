@@ -27,6 +27,12 @@ cores, ícones, fotos) são editáveis por administradores.
 
 - Subdomínio da Andrade Hotéis ainda não definido: o build precisa suportar o base path
   `/frigobar/` (github.io) e a raiz (domínio próprio) por configuração.
-- Mecanismo de edição por administradores: a decidir no plano da primeira feature (opções
-  compatíveis com GitHub Pages: CMS baseado em Git como Sveltia/Decap CMS, ou serviço com
-  plano gratuito).
+
+## Decisões técnicas (feature 001 — ver `specs/001-pagina-publica-frigobar/plan.md`)
+
+- React **18.3** (não 19: o Decap CMS ainda não suporta), TypeScript, Vite, Node 24 LTS.
+- Conteúdo em `content/*.json`, schema Zod em `src/content/schema.ts`. Mudou o formato?
+  Atualize juntos schema, `public/admin/config.yml` e `contracts/content-files.md`.
+- Edição: Decap CMS em `/admin/` com `editorial_workflow` (rascunho = PR); login GitHub via
+  Cloudflare Worker OAuth. Preview do CMS usa os mesmos componentes da página pública.
+- Mídia com caminhos relativos (`uploads/...`) por causa do base path configurável.
