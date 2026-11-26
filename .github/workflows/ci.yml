@@ -1,0 +1,94 @@
+# Gates da constituição em todo PR, inclusive nos rascunhos do CMS (branches cms/**).
+# O job se chama "ci" e é o status check exigido pela proteção da main (docs/configuracao-cms.md).
+# Um único job com passos condicionais (sem filtro `paths` no gatilho): um check obrigatório
+# que não roda ficaria pendente e travaria o "Publicar" do CMS.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches-ignore: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    name: ci
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detectar se a mudança é só de conteúdo
+        id: escopo
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            base="origin/${{ github.base_ref }}"
+          else
+            base="origin/main"
+          fi
+          alterados="$(git diff --name-only "$base"...HEAD || true)"
+          echo "Arquivos alterados:"; echo "$alterados"
+          if [ -n "$alterados" ] && ! echo "$alterados" | grep -vqE '^(content/|public/uploads/)'; then
+            echo "somente_conteudo=true" >> "$GITHUB_OUTPUT"
+            echo "Caminho rápido: só conteúdo (validação + build)."
+          else
+            echo "somente_conteudo=false" >> "$GITHUB_OUTPUT"
+            echo "Caminho completo."
+          fi
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+
+      # ---- Sempre (inclusive no caminho rápido) ----
+      - name: Validar conteúdo real (content/)
+        run: npm run validate
+
+      - name: Build de produção
+        run: npm run build
+
+      # ---- Só quando há mudança de código ----
+      - name: Lint
+        if: steps.escopo.outputs.somente_conteudo != 'true'
+        run: npm run lint
+
+      - name: Testes unitários
+        if: steps.escopo.outputs.somente_conteudo != 'true'
+        run: npm test
+
+      - name: Cache dos navegadores do Playwright
+        if: steps.escopo.outputs.somente_conteudo != 'true'
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
+      - name: Instalar Chromium
+        if: steps.escopo.outputs.somente_conteudo != 'true'
+        run: npx playwright install --with-deps chromium
+
+      # O e2e refaz o build com tests/fixtures (ver playwright.config.ts). As etapas seguintes
+      # (Lighthouse e tamanho do bundle) medem esse build de teste, estável entre execuções.
+      - name: Testes e2e (conteúdo de teste)
+        if: steps.escopo.outputs.somente_conteudo != 'true'
+        run: npm run test:e2e
+
+      - name: Relatório do Playwright
+        if: failure() && steps.escopo.outputs.somente_conteudo != 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report
+          retention-days: 7

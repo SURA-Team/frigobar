@@ -1,0 +1,92 @@
+{
+  "categorias": [
+    {
+      "nome": "Bebidas",
+      "icone": "cup-soda",
+      "visivel": true,
+      "itens": [
+        {
+          "nome": "Água mineral sem gás 500 ml",
+          "descricao": "",
+          "preco": 6,
+          "foto": "uploads/agua.jpg",
+          "etiquetas": [],
+          "visivel": true
+        },
+        {
+          "nome": "Refrigerante lata 350 ml",
+          "descricao": "Sabores conforme disponibilidade.",
+          "preco": 8,
+          "etiquetas": [],
+          "visivel": true
+        },
+        {
+          "nome": "Cerveja long neck",
+          "descricao": "Cerveja pilsen 355 ml.",
+          "preco": 14.5,
+          "foto": "uploads/cerveja.jpg",
+          "etiquetas": ["alcoolico"],
+          "visivel": true
+        },
+        {
+          "nome": "Suco de uva integral",
+          "descricao": "Garrafa de 300 ml.",
+          "preco": 9.5,
+          "etiquetas": ["vegano"],
+          "visivel": false
+        }
+      ]
+    },
+    {
+      "nome": "Snacks",
+      "icone": "popcorn",
+      "visivel": true,
+      "itens": [
+        {
+          "nome": "Batata chips 45 g",
+          "descricao": "Batata ondulada com sal.",
+          "preco": 12,
+          "foto": "uploads/chips.jpg",
+          "etiquetas": ["sem-gluten"],
+          "visivel": true
+        },
+        {
+          "nome": "Mix de castanhas 50 g",
+          "descricao": "Castanha-de-caju, castanha-do-pará, amêndoas e uvas-passas.",
+          "preco": 16,
+          "etiquetas": ["vegano", "sem-lactose"],
+          "visivel": true
+        }
+      ]
+    },
+    {
+      "nome": "Chocolates",
+      "icone": "candy",
+      "visivel": true,
+      "itens": [
+        {
+          "nome": "Chocolate ao leite 90 g",
+          "descricao": "Barra de chocolate ao leite.",
+          "preco": 10,
+          "foto": "uploads/chocolate.jpg",
+          "etiquetas": [],
+          "visivel": true
+        },
+        {
+          "nome": "Bombom de boas-vindas",
+          "descricao": "Um mimo do hotel para você.",
+          "preco": 0,
+          "etiquetas": ["novo"],
+          "visivel": true
+        },
+        {
+          "nome": "Chocolate 70% cacau 80 g",
+          "descricao": "Chocolate amargo com 70% de cacau, produzido com amêndoas de cacau selecionadas.\nSem adição de leite.\nIngredientes: massa de cacau, açúcar, manteiga de cacau e lecitina de girassol.\nPode conter traços de castanhas.\nConservar em local fresco e seco.",
+          "preco": 15,
+          "etiquetas": ["vegano", "sem-lactose"],
+          "visivel": true
+        }
+      ]
+    }
+  ]
+}

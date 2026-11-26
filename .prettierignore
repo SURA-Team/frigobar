@@ -1,0 +1,14 @@
+dist
+node_modules
+coverage
+src/generated
+public/_img
+public/uploads
+test-results
+playwright-report
+.lighthouseci
+specs
+.specify
+.claude
+package-lock.json
+*.md

@@ -1,0 +1,13 @@
+{
+  "cores": {
+    "principal": "#1F3A5F",
+    "secundaria": "#C8A96A",
+    "fundo": "#FFFFFF",
+    "texto": "#1A1A1A",
+    "destaque": "#C8A96A"
+  },
+  "fontes": {
+    "titulos": { "origem": "padrao", "padrao": "playfair-display" },
+    "textos": { "origem": "padrao", "padrao": "inter" }
+  }
+}
