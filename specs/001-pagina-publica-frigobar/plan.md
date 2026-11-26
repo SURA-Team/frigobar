@@ -21,7 +21,7 @@ O histórico do Git é o registro oficial e permite reverter qualquer publicaç�
 
 **Language/Version**: TypeScript 5.x, Node.js 24 LTS (build/CI)
 
-**Primary Dependencies**: React 18.3, Vite 7, Decap CMS 3.x (`decap-cms-app`, só no `/admin/`),
+**Primary Dependencies**: React 19, Vite 7, Decap CMS 3.x (`decap-cms-app`, só no `/admin/`),
 Zod 4 (schema de conteúdo), lucide-react (ícones), @fontsource/* (8 fontes padrão), qrcode
 (gerador de QR), sharp (otimização de imagens no build)
 
@@ -41,7 +41,7 @@ versões); desktop funcional. Hospedagem: GitHub Pages.
 Lighthouse Performance ≥ 90 mobile; JS da página pública ≤ 100 KB gzip (sem o CMS)
 
 **Constraints**: Custo zero; sem servidor próprio; repositório público (sem segredos/dados
-pessoais); base path configurável (`/frigobar/` ou `/`); React 18 (compatibilidade Decap);
+pessoais); base path configurável (`/frigobar/` ou `/`); React 19 (exigência do Decap ≥ 3.7);
 publicação visível ≤ 10 min (SC-004)
 
 **Scale/Scope**: 1 hotel; ≤ 30 categorias e ≤ 80 itens por categoria (tipicamente 20–60 itens
@@ -161,7 +161,7 @@ pré-visualização do CMS seja idêntica à página do hóspede. O bundle do De
 
 | Risco | Impacto | Mitigação |
 |---|---|---|
-| Decap ainda sem React 19 | Ficamos em React 18.3 | Sem impacto funcional; reavaliar quando Decap suportar |
+| Dependências internas do Decap declaram React ≤ 18 | Avisos de peer no `npm ls` | É a combinação publicada pelo próprio Decap 3.18; testes e build cobrem o site; acompanhar atualizações do Decap |
 | Dois administradores no **mesmo** rascunho ao mesmo tempo ([R11](research.md)) | Último salvamento prevalece dentro do rascunho (recuperável no histórico, como prevê o FR-022) | Guia orienta avisar a equipe; ≤ 5 admins |
 | Conteúdo inválido publicado pelo CMS ([R4](research.md)) | Deploy falharia e o site ficaria na versão anterior sem aviso | Validação no CMS + aviso na pré-visualização + proteção de branch exigindo CI antes do merge |
 | Restauração via GitHub "Revert" pode ser difícil para não técnicos | SC-006 (≤ 5 min) não atingido | Guia com capturas; validar com funcionário; se falhar, spec de página "Histórico" própria |

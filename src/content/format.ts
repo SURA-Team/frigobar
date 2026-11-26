@@ -1,6 +1,6 @@
-import { somenteDigitos } from './schema';
-
-export { somenteDigitos };
+export function somenteDigitos(texto: string): string {
+  return texto.replace(/[^0-9]/g, '');
+}
 
 const moeda = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
 // Espaço não separável (U+00A0) e espaço estreito (U+202F) que o Intl usa após "R$".

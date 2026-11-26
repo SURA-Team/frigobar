@@ -16,10 +16,7 @@
     "skipLibCheck": true,
     "allowImportingTsExtensions": false,
     "noEmit": true,
-    "types": ["vite/client", "node"],
-    "paths": {
-      "@conteudo/*": ["./content/*"]
-    }
+    "types": ["vite/client", "node"]
   },
   "include": [
     "src",

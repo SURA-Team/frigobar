@@ -30,7 +30,10 @@ cores, ícones, fotos) são editáveis por administradores.
 
 ## Decisões técnicas (feature 001 — ver `specs/001-pagina-publica-frigobar/plan.md`)
 
-- React **18.3** (não 19: o Decap CMS ainda não suporta), TypeScript, Vite, Node 24 LTS.
+- React **19** (o Decap CMS exige React 19 desde a 3.7.0; mesmo React no site e no preview do
+  CMS), TypeScript, Vite 7, Node 24 LTS.
+- O Zod não vai para o navegador da página pública: o plugin `scripts/vite-plugin-conteudo.ts`
+  valida e normaliza o conteúdo no build (módulo `virtual:conteudo`).
 - Conteúdo em `content/*.json`, schema Zod em `src/content/schema.ts`. Mudou o formato?
   Atualize juntos schema, `src/admin/config.ts` e `contracts/content-files.md`.
 - Edição: Decap CMS em `/admin/` com `editorial_workflow` (rascunho = PR); login GitHub via

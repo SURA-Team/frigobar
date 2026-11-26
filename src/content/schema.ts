@@ -6,6 +6,7 @@ import { z } from 'zod';
 import { ETIQUETA_IDS } from '../icons/tags';
 import { ICONE_IDS } from '../icons/registry';
 import { FONTE_PADRAO_IDS } from '../theme/fonts';
+import { somenteDigitos } from './format';
 
 z.config(z.locales.ptBR());
 
@@ -56,10 +57,6 @@ function caminhoMidia(padrao: RegExp, mensagem: string) {
       message: 'O arquivo deve estar na pasta uploads/ (envie pelo painel), ex.: uploads/foto.jpg.',
     })
     .refine((v) => padrao.test(v), { message: mensagem });
-}
-
-export function somenteDigitos(texto: string): string {
-  return texto.replace(/\D/g, '');
 }
 
 const telefone = z

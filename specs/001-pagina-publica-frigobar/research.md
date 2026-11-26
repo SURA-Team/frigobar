@@ -38,8 +38,9 @@ estático, com backend `github`, `publish_mode: editorial_workflow` e interface 
   histórico deixaria de ser o Git.
 - **Editar JSON direto no GitHub**: zero esforço, mas exige conhecimento técnico (fere IV).
 
-**Restrição derivada**: Decap 3.x suporta React 18 (suporte a React 19 ainda em aberto —
-issue decaporg/decap-cms#7365). O projeto inteiro usa **React 18.3** para compartilhar
+**Restrição derivada** (corrigida na implementação, 2026-11-26): o Decap **exige React 19**
+desde a versão 3.7.0 (jun/2025); a última com React 18 é a 3.6.4, sem atualizações desde então.
+O projeto inteiro usa **React 19** com o Decap atual (3.18) para compartilhar
 componentes com o preview do CMS.
 
 ---
@@ -292,7 +293,7 @@ gatilho, porque um check obrigatório que não roda ficaria pendente e travaria 
 |------|--------|
 | Node.js | 24 LTS |
 | TypeScript | 5.x |
-| React / React DOM | 18.3 (restrição do Decap — R1) |
+| React / React DOM | 19 (exigência do Decap ≥ 3.7 — R1) |
 | Vite | 7.x |
 | Decap CMS (`decap-cms-app`) | 3.x |
 | Zod | 4.x |
