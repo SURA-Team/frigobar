@@ -8,6 +8,15 @@
 
 **Input**: User description: "Página pública do frigobar acessada via QR code no quarto, listando os itens com foto, nome, descrição e preço, organizados por categoria, com identidade visual editável por administradores (textos, cores, ícones, fotos e logotipo)."
 
+## Clarifications
+
+### Session 2026-11-26
+
+- Q: Os itens devem ter selos/etiquetas e aviso legal automático para bebidas alcoólicas? → A: Sim — etiquetas de uma lista fixa (Alcoólico, Sem glúten, Sem lactose, Vegano, Novo); itens "Alcoólico" exibem automaticamente o aviso "Venda proibida para menores de 18 anos. Beba com moderação."
+- Q: O administrador pode trocar a fonte (tipografia) da página? → A: Sim — escolhe uma fonte para títulos e outra para textos, a partir de uma lista padrão de 6 a 10 fontes testadas, ou envia um arquivo de fonte próprio (ex.: fonte oficial da marca).
+- Q: Ao tocar em um item, abre um detalhe ampliado ou tudo fica visível na lista? → A: Lista compacta (foto pequena, nome, preço, etiquetas, descrição em até 2 linhas); ao tocar, abre o detalhe com foto grande, descrição completa e aviso legal quando houver.
+- Q: Os contatos devem ser botões clicáveis (ligar/WhatsApp) ou texto livre? → A: Botões, porém opcionais — telefone da recepção, WhatsApp, e-mail e ramal (só texto) são campos opcionais; só aparecem os preenchidos. O texto livre de informações gerais continua existindo.
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Hóspede consulta o frigobar pelo QR code (Priority: P1)
@@ -37,6 +46,15 @@ verificar que todos os itens visíveis aparecem corretamente, por categoria, com
    **Then** o item não aparece.
 5. **Given** um item sem foto cadastrada, **When** a página é exibida, **Then** o item aparece com
    uma imagem padrão (ícone da categoria), sem espaço quebrado.
+6. **Given** uma cerveja cadastrada com a etiqueta "Alcoólico", **When** a página é exibida,
+   **Then** o card mostra a etiqueta, a categoria da cerveja mostra uma vez o aviso "Venda
+   proibida para menores de 18 anos. Beba com moderação." e o detalhe da cerveja também o exibe.
+7. **Given** um item com descrição de 5 linhas, **When** o hóspede toca no card, **Then** abre o
+   detalhe com foto ampliada e descrição completa; **When** ele usa o "voltar" do celular,
+   **Then** retorna à lista na mesma posição em que estava.
+8. **Given** um administrador que preencheu apenas o WhatsApp e o ramal da recepção, **When** o
+   hóspede abre a página, **Then** vê um botão de WhatsApp que abre a conversa e o ramal em texto,
+   e nenhum botão de telefone ou e-mail.
 
 ---
 
@@ -123,13 +141,17 @@ diferentes e confirmar que ambos abrem a página pública.
 - **Conexão lenta**: textos e preços aparecem primeiro; fotos carregam progressivamente sem
   deslocar o conteúdo já exibido.
 - **Nomes ou descrições longas**: o texto quebra em linhas sem estourar o layout nem gerar
-  rolagem horizontal.
+  rolagem horizontal; na lista, a descrição é cortada em 2 linhas com reticências e aparece
+  completa no detalhe.
 - **Categoria sem itens visíveis**: a categoria não é exibida, nem nos atalhos.
 - **Catálogo sem nenhum item visível**: a página exibe uma mensagem orientando o hóspede a
   contatar a recepção.
 - **Item com preço zero**: exibido como "Cortesia" em vez de "R$ 0,00".
 - **Foto em formato não suportado ou acima do limite de envio**: o envio é recusado com mensagem
   clara indicando formatos e tamanho aceitos.
+- **Fonte enviada inválida, acima de 2 MB ou sem acentos do português**: o envio é recusado com
+  mensagem clara (ou, se faltarem acentos, o administrador é avisado na pré-visualização antes de
+  publicar).
 - **Dois administradores editando ao mesmo tempo**: nenhuma alteração é perdida silenciosamente;
   quem publicar por último é avisado do conflito.
 - **Área de administração indisponível**: a página pública continua exibindo a última versão
@@ -149,14 +171,31 @@ diferentes e confirmar que ambos abrem a página pública.
   boas-vindas configurados pelo administrador.
 - **FR-003**: A página MUST exibir os itens agrupados por categoria, na ordem de categorias e de
   itens definida pelo administrador; cada categoria exibe nome e ícone.
-- **FR-004**: Cada item MUST exibir foto, nome, descrição e preço em reais no formato brasileiro
-  (ex.: "R$ 12,50"); preço zero é exibido como "Cortesia".
+- **FR-004**: Na lista, cada item MUST ser exibido como um card compacto com foto pequena, nome,
+  preço em reais no formato brasileiro (ex.: "R$ 12,50"; preço zero exibido como "Cortesia"),
+  etiquetas e descrição limitada a 2 linhas.
+- **FR-004a**: Cada item MAY ter uma ou mais etiquetas de uma lista fixa — Alcoólico, Sem glúten,
+  Sem lactose, Vegano, Novo — exibidas no card e no detalhe do item com texto e ícone. Itens com
+  a etiqueta "Alcoólico" MUST exibir o aviso "Venda proibida para menores de 18 anos. Beba com
+  moderação." no detalhe do item, e categorias que contenham itens alcoólicos MUST exibir o mesmo
+  aviso uma vez na lista, sem que o administrador precise digitá-lo. Criar etiquetas novas está
+  fora do escopo.
+- **FR-004b**: Ao tocar em um item, o sistema MUST abrir o detalhe do item com foto ampliada,
+  nome, preço, etiquetas, descrição completa e o aviso legal quando aplicável. O detalhe MUST
+  poder ser fechado pelo botão de fechar, pelo gesto/botão "voltar" do celular, ou pela tecla Esc,
+  retornando o hóspede à mesma posição da lista.
 - **FR-005**: Quando houver mais de uma categoria visível, a página MUST oferecer atalhos que
   levam diretamente a cada categoria.
 - **FR-006**: Itens ocultos e categorias sem itens visíveis MUST NOT aparecer na página pública.
 - **FR-007**: Itens sem foto MUST exibir uma imagem padrão baseada no ícone da categoria.
-- **FR-008**: A página MUST exibir uma seção de informações gerais configurável (ex.: forma de
-  cobrança, contato/ramal da recepção).
+- **FR-008**: A página MUST exibir uma seção de informações gerais configurável em texto livre
+  (ex.: forma de cobrança, observações), preservando parágrafos e quebras de linha.
+- **FR-008a**: O administrador MAY preencher contatos opcionais — telefone da recepção, WhatsApp,
+  e-mail e ramal interno. Cada contato preenchido MUST aparecer na página: telefone como botão
+  que inicia a ligação, WhatsApp como botão que abre a conversa, e-mail como botão que abre o
+  aplicativo de e-mail, e ramal apenas como texto (é discado do telefone do quarto). Contatos não
+  preenchidos MUST NOT aparecer; se nenhum for preenchido, o bloco de contatos não é exibido.
+  O sistema MUST validar o formato de telefone e e-mail antes de publicar.
 - **FR-009**: A página pública MUST ser somente leitura e MUST NOT coletar dados pessoais do
   hóspede.
 - **FR-010**: A página MUST ser legível e utilizável em telas a partir de 360px de largura, sem
@@ -174,12 +213,18 @@ diferentes e confirmar que ambos abrem a página pública.
 - **FR-014**: Administradores MUST poder criar, editar, reordenar, ocultar e remover categorias
   (nome, ícone, ordem, visibilidade).
 - **FR-015**: Administradores MUST poder criar, editar, reordenar, ocultar e remover itens (nome,
-  descrição, preço, foto, categoria, ordem, visibilidade).
-- **FR-016**: Administradores MUST poder editar os textos fixos da página: nome do hotel, mensagem
-  de boas-vindas, informações gerais e rodapé.
+  descrição, preço, foto, categoria, etiquetas, ordem, visibilidade).
+- **FR-016**: Administradores MUST poder editar os textos fixos da página (nome do hotel, mensagem
+  de boas-vindas, informações gerais e rodapé) e os contatos opcionais.
 - **FR-017**: Administradores MUST poder alterar a identidade visual: logotipo, foto de capa,
-  cores (principal, secundária, fundo, texto e destaque) e ícones das categorias, escolhidos de uma
-  biblioteca de ícones disponível no sistema.
+  cores (principal, secundária, fundo, texto e destaque), fontes e ícones das categorias,
+  escolhidos de uma biblioteca de ícones disponível no sistema.
+- **FR-017a**: O administrador MUST poder escolher uma fonte para títulos e outra para textos,
+  a partir de uma lista padrão de 6 a 10 fontes testadas para legibilidade em celular e com
+  suporte completo a acentuação do português; e MUST poder enviar um arquivo de fonte próprio
+  (formatos WOFF2, WOFF, TTF ou OTF, até 2 MB) para uso em títulos e/ou textos. Se uma fonte
+  enviada não puder ser carregada pelo hóspede, a página MUST exibir o texto com uma fonte
+  padrão legível, nunca texto invisível.
 - **FR-018**: O sistema MUST validar o conteúdo antes de publicar — campos obrigatórios (nome do
   item, preço maior ou igual a zero, nome da categoria) e contraste mínimo entre texto e fundo — e
   bloquear a publicação com mensagens claras indicando o que corrigir.
@@ -199,12 +244,17 @@ diferentes e confirmar que ambos abrem a página pública.
 ### Key Entities *(include if feature involves data)*
 
 - **Configuração do site**: nome do hotel, mensagem de boas-vindas, informações gerais, rodapé,
-  logotipo, foto de capa, endereço público da página.
-- **Tema**: conjunto de cores da página (principal, secundária, fundo, texto, destaque); aplicado
-  a toda a página pública.
+  logotipo, foto de capa, endereço público da página e contatos opcionais (telefone da recepção,
+  WhatsApp, e-mail, ramal interno).
+- **Tema**: conjunto de cores da página (principal, secundária, fundo, texto, destaque) e fontes
+  (títulos e textos); aplicado a toda a página pública.
+- **Fonte**: da lista padrão do sistema ou enviada pelo administrador (nome e arquivo); usada
+  pelo tema para títulos e/ou textos.
 - **Categoria**: nome, ícone, posição na ordem, visível/oculta; contém itens.
-- **Item**: nome, descrição, preço (em reais), foto (opcional), categoria, posição na ordem
-  dentro da categoria, visível/oculto.
+- **Item**: nome, descrição, preço (em reais), foto (opcional), categoria, etiquetas (zero ou
+  mais), posição na ordem dentro da categoria, visível/oculto.
+- **Etiqueta**: lista fixa definida pelo sistema — Alcoólico, Sem glúten, Sem lactose, Vegano,
+  Novo — cada uma com nome e ícone; "Alcoólico" aciona o aviso legal de consumo de álcool.
 - **Administrador**: pessoa autorizada a editar e publicar; identificada individualmente no
   histórico.
 - **Rascunho**: alterações salvas pelo administrador e ainda não publicadas; visível apenas na
@@ -242,7 +292,8 @@ diferentes e confirmar que ambos abrem a página pública.
 - Preços são exibidos em reais, já com impostos, sem promoções ou preços diferenciados por horário
   ou tipo de quarto.
 - Haverá poucos administradores (até 5), todos com o mesmo nível de permissão.
-- O hotel fornece logotipo, fotos e textos e tem direito de uso sobre eles.
+- O hotel fornece logotipo, fotos, textos e eventuais fontes próprias e tem direito de uso
+  sobre eles (incluindo licença da fonte para uso na web).
 - Os ícones vêm de uma biblioteca predefinida no sistema; envio de ícones próprios está fora do
   escopo desta feature (o logotipo e as fotos podem ser enviados livremente).
 - O endereço definitivo da página (subdomínio da Andrade Hotéis) ainda não está confirmado; até
