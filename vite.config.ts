@@ -17,6 +17,7 @@ export default defineConfig({
       input: {
         main: path.resolve('index.html'),
         admin: path.resolve('admin/index.html'),
+        qrcode: path.resolve('admin/qrcode.html'),
       },
     },
   },

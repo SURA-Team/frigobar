@@ -173,13 +173,13 @@ independentes.
 
 ### Tests for User Story 4
 
-- [ ] T063 [P] [US4] Teste e2e `tests/e2e/qrcode.spec.ts`: a página exibe a `urlPublica` do conteúdo, oferece downloads SVG e PNG (verifica `download` e tipo do arquivo) e mostra o aviso de endereço provisório quando `enderecoDefinitivo` é `false`
+- [X] T063 [P] [US4] Teste e2e `tests/e2e/qrcode.spec.ts`: a página exibe a `urlPublica` do conteúdo, oferece downloads SVG e PNG (verifica `download` e tipo do arquivo) e mostra o aviso de endereço provisório quando `enderecoDefinitivo` é `false`
 
 ### Implementation for User Story 4
 
-- [ ] T064 [US4] Instalar `qrcode` e `@types/qrcode` em `package.json`; criar `admin/qrcode.html` (`noindex`, `lang="pt-BR"`) e incluí-lo em `build.rollupOptions.input` de `vite.config.ts`
-- [ ] T065 [US4] Criar `src/admin/qrcode.tsx`: lê `conteudoPublicado.site`, gera QR com `errorCorrectionLevel: 'M'` e margem 4; mostra prévia e URL codificada; botões "Baixar SVG" (`QRCode.toString` tipo `svg`) e "Baixar PNG 2048×2048" (`QRCode.toDataURL` com `width: 2048`); aviso destacado quando `enderecoDefinitivo` é `false` explicando que QR codes impressos podem precisar ser trocados (FR-023); orientação de impressão mínima de 3×3 cm; aplica o tema do site (depende de T064)
-- [ ] T066 [US4] Adicionar em `src/admin/config.ts` a descrição da coleção `textos-contatos` com link para `admin/qrcode.html` ("Gerar QR code para impressão")
+- [X] T064 [US4] Instalar `qrcode` e `@types/qrcode` em `package.json`; criar `admin/qrcode.html` (`noindex`, `lang="pt-BR"`) e incluí-lo em `build.rollupOptions.input` de `vite.config.ts`
+- [X] T065 [US4] Criar `src/admin/qrcode.tsx`: lê `conteudoPublicado.site`, gera QR com `errorCorrectionLevel: 'M'` e margem 4; mostra prévia e URL codificada; botões "Baixar SVG" (`QRCode.toString` tipo `svg`) e "Baixar PNG 2048×2048" (`QRCode.toDataURL` com `width: 2048`); aviso destacado quando `enderecoDefinitivo` é `false` explicando que QR codes impressos podem precisar ser trocados (FR-023); orientação de impressão mínima de 3×3 cm; aplica o tema do site (depende de T064)
+- [X] T066 [US4] Adicionar em `src/admin/config.ts` a descrição da coleção `textos-contatos` com link para `admin/qrcode.html` ("Gerar QR code para impressão")
 
 **Checkpoint**: Todas as histórias funcionais e testáveis de forma independente
 

@@ -15,9 +15,29 @@
           sans-serif;
         color: #1a1a1a;
       }
+      .atalho-qr {
+        position: fixed;
+        left: 16px;
+        bottom: 16px;
+        z-index: 1000;
+        padding: 10px 14px;
+        border-radius: 999px;
+        background: #1f3a5f;
+        color: #fff;
+        font:
+          600 14px/1 system-ui,
+          sans-serif;
+        text-decoration: none;
+        box-shadow: 0 4px 12px rgb(0 0 0 / 25%);
+      }
+      .atalho-qr:focus-visible {
+        outline: 3px solid #c8a96a;
+        outline-offset: 2px;
+      }
     </style>
   </head>
   <body>
+    <a class="atalho-qr" href="qrcode.html" target="_blank" rel="noopener">Gerar QR code</a>
     <script type="module" src="/src/admin/cms.tsx"></script>
   </body>
 </html>

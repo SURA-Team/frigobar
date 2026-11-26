@@ -296,7 +296,9 @@ export function colecoes(): CmsCollection[] {
     {
       name: 'textos-contatos',
       label: 'Textos e contatos',
-      description: 'Nome do hotel, logotipo, boas-vindas, informações, rodapé e contatos.',
+      description:
+        'Nome do hotel, logotipo, boas-vindas, informações, rodapé, contatos e endereço da página. ' +
+        'Para gerar o QR code de impressão, use o botão "Gerar QR code" no canto da tela.',
       format: 'json',
       editor: { preview: true },
       files: [
