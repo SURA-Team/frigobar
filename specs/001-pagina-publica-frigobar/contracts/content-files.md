@@ -1,7 +1,7 @@
 # Contrato: arquivos de conteúdo
 
 Interface entre o **CMS** (que escreve) e o **site** (que lê). Qualquer mudança neste contrato
-exige atualizar juntos: `src/content/schema.ts`, `public/admin/config.yml` e este documento.
+exige atualizar juntos: `src/content/schema.ts`, `src/admin/config.ts` e este documento.
 Regras de validação completas: [../data-model.md](../data-model.md).
 
 Caminhos de mídia são **relativos** (sem `/` inicial), ex.: `uploads/coca-cola.jpg`, para

@@ -93,8 +93,6 @@ content/                      # Conteúdo editado pelo CMS (fonte da verdade)
 └── catalog.json
 
 public/
-├── admin/
-│   └── config.yml            # Configuração do Decap (coleções, campos, backend)
 ├── uploads/                  # Fotos, logotipo, capa e fontes enviadas pelo CMS
 └── CNAME                     # Só quando houver subdomínio próprio
 
@@ -125,7 +123,9 @@ src/
 ├── styles/
 │   └── global.css
 ├── admin/
-│   ├── cms.tsx               # Inicializa Decap, registra preview e widgets
+│   ├── cms.tsx               # Inicializa Decap (manual init), registra preview e widgets
+│   ├── config.ts             # Configuração do Decap em TS: backend, coleções e campos; listas
+│   │                         # de ícones/etiquetas/fontes importadas do código (sem duplicação)
 │   ├── preview/PagePreview.tsx   # Renderiza <App> com conteúdo publicado + rascunho
 │   ├── widgets/              # PaletteWidget (contraste), FontWidget, IconWidget
 │   └── qrcode.tsx            # Página do gerador de QR code

@@ -23,6 +23,9 @@ estático, com backend `github`, `publish_mode: editorial_workflow` e interface 
 - `registerWidget` permite widgets customizados em React (paleta com checagem de contraste,
   seletor de fonte, seletor de ícone).
 - Decap é React; compartilhar componentes entre site e preview é direto.
+- A configuração do CMS é feita em TypeScript (`src/admin/config.ts`, via `CMS.init({ config })`
+  com `load_config_file: false`) em vez de `config.yml`, para que as opções de ícones, etiquetas
+  e fontes sejam importadas do mesmo código usado pelo site e pelo schema.
 
 **Alternativas consideradas**:
 - **Sveltia CMS**: mais moderno e rápido, compatível com a configuração do Decap, mas não

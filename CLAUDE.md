@@ -32,7 +32,7 @@ cores, ícones, fotos) são editáveis por administradores.
 
 - React **18.3** (não 19: o Decap CMS ainda não suporta), TypeScript, Vite, Node 24 LTS.
 - Conteúdo em `content/*.json`, schema Zod em `src/content/schema.ts`. Mudou o formato?
-  Atualize juntos schema, `public/admin/config.yml` e `contracts/content-files.md`.
+  Atualize juntos schema, `src/admin/config.ts` e `contracts/content-files.md`.
 - Edição: Decap CMS em `/admin/` com `editorial_workflow` (rascunho = PR); login GitHub via
   Cloudflare Worker OAuth. Preview do CMS usa os mesmos componentes da página pública.
 - Mídia com caminhos relativos (`uploads/...`) por causa do base path configurável.

@@ -82,7 +82,7 @@ Esperado: todos terminam com código 0.
    `https://<worker>.workers.dev/callback`.
 2. Publicar o Worker `sveltia-cms-auth` na conta Cloudflare (plano gratuito) com os segredos
    `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET` e `ALLOWED_DOMAINS` = domínio do site.
-3. Em `public/admin/config.yml`, `backend.base_url` = URL do Worker.
+3. Em `src/admin/config.ts`, `backend.base_url` = URL do Worker.
 4. Repositório → Settings → **Pages** → Source: GitHub Actions. Variável `PAGES_BASE_PATH`
    (`/frigobar/` ou `/` com domínio próprio).
 5. Adicionar cada administrador como colaborador com permissão **Write**.
