@@ -66,6 +66,39 @@ describe('configuração do CMS', () => {
     expect(regex.test('')).toBe(false);
   });
 
+  it('identidade visual: paleta, fontes com limite de 2 MB', () => {
+    const campos = camposDoArquivo(config, 'identidade-visual', 'identidade-visual');
+    expect(campo(campos, 'cores').widget).toBe('paleta');
+    const fontes = campo(campos, 'fontes').fields as Json[];
+    for (const nome of ['titulos', 'textos']) {
+      const f = campo(fontes, nome);
+      expect(f.widget).toBe('fonte');
+      expect(f.media_library.config.max_file_size).toBe(LIMITES.fonteBytes);
+    }
+    expect(LIMITES.fonteBytes).toBe(2 * 1024 * 1024);
+  });
+
+  it('textos e contatos usam os mesmos padrões do schema', () => {
+    const campos = camposDoArquivo(config, 'textos-contatos', 'textos-contatos');
+    expect(campo(campos, 'logo').pattern[0]).toBe(PADROES.logo);
+    expect(campo(campos, 'fotoCapa').pattern[0]).toBe(PADROES.imagem);
+    const contatos = campo(campos, 'contatos').fields as Json[];
+    expect(campo(contatos, 'telefone').pattern[0]).toBe(PADROES.telefone);
+    expect(campo(contatos, 'whatsapp').pattern[0]).toBe(PADROES.telefone);
+    expect(campo(contatos, 'email').pattern[0]).toBe(PADROES.email);
+    expect(campo(contatos, 'ramal').pattern[0]).toBe(PADROES.ramal);
+    for (const contato of contatos) expect(contato.required).toBe(false);
+    expect(campo(campos, 'urlPublica').pattern[0]).toBe(PADROES.urlHttps);
+  });
+
+  it('padrões do painel aceitam e recusam os mesmos casos que o schema', () => {
+    expect(PADROES.telefone.test('(51) 99999-8888')).toBe(true);
+    expect(PADROES.telefone.test('(51) 3333-444')).toBe(false); // 9 dígitos
+    expect(PADROES.telefone.test('51 999998888 1')).toBe(false); // 12 dígitos
+    expect(PADROES.email.test('recepcao@hotel.com.br')).toBe(true);
+    expect(PADROES.email.test('recepcao@')).toBe(false);
+  });
+
   it('modo local usa decap-server sem rascunhos', () => {
     const local = criarConfig({ local: true }) as Json;
     expect(local.local_backend).toBe(true);

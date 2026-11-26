@@ -71,10 +71,12 @@ export function camposCatalogo(): CmsField[] {
         {
           name: 'icone',
           label: 'Ícone',
-          widget: 'select',
+          widget: 'icone',
+          // Opções também ficam na config para documentar e testar o registro de ícones.
           options: ICONE_IDS.map((id) => ({ value: id, label: ICONES[id].rotulo })),
           default: 'package',
-        },
+          hint: 'Aparece ao lado do nome da categoria e quando um item não tem foto.',
+        } as CmsField,
         {
           name: 'visivel',
           label: 'Mostrar para o hóspede',
@@ -134,6 +136,131 @@ export function camposCatalogo(): CmsField[] {
   ];
 }
 
+export function camposIdentidadeVisual(): CmsField[] {
+  return [
+    {
+      name: 'cores',
+      label: 'Cores',
+      widget: 'paleta',
+      hint: 'Principal: títulos e botões. Destaque: etiquetas. O sistema confere o contraste.',
+    } as CmsField,
+    {
+      name: 'fontes',
+      label: 'Fontes',
+      widget: 'object',
+      collapsed: false,
+      fields: [
+        {
+          name: 'titulos',
+          label: 'Fonte dos títulos',
+          widget: 'fonte',
+          ...limiteUpload(LIMITES.fonteBytes),
+        } as CmsField,
+        {
+          name: 'textos',
+          label: 'Fonte dos textos',
+          widget: 'fonte',
+          ...limiteUpload(LIMITES.fonteBytes),
+        } as CmsField,
+      ],
+    } as CmsField,
+  ];
+}
+
+function campoContato(
+  nome: string,
+  rotulo: string,
+  padrao: RegExp,
+  mensagem: string,
+  dica: string,
+): CmsField {
+  return {
+    name: nome,
+    label: rotulo,
+    widget: 'string',
+    required: false,
+    pattern: [padrao, mensagem],
+    hint: dica,
+  } as CmsField;
+}
+
+export function camposTextosContatos(): CmsField[] {
+  return [
+    campoTexto('nomeHotel', 'Nome do hotel', 80, { obrigatorio: true }),
+    campoTexto('boasVindas', 'Mensagem de boas-vindas', 300, {
+      multilinha: true,
+      hint: 'Aparece no topo da página, abaixo do nome do hotel.',
+    }),
+    campoImagem('logo', 'Logotipo', {
+      logo: true,
+      required: true,
+      hint: 'JPEG, PNG, WebP ou SVG. Prefira fundo transparente.',
+    }),
+    campoImagem('fotoCapa', 'Foto de capa', {
+      required: false,
+      hint: 'Opcional. Fica atrás do nome do hotel, escurecida para o texto continuar legível.',
+    }),
+    campoTexto('informacoesGerais', 'Informações gerais', 2000, {
+      multilinha: true,
+      hint: 'Ex.: forma de cobrança, observações. As quebras de linha são mantidas.',
+    }),
+    campoTexto('rodape', 'Rodapé', 200),
+    {
+      name: 'contatos',
+      label: 'Contatos da recepção',
+      widget: 'object',
+      collapsed: false,
+      hint: 'Todos opcionais: só os preenchidos aparecem para o hóspede.',
+      fields: [
+        campoContato(
+          'telefone',
+          'Telefone',
+          PADROES.telefone,
+          MENSAGENS.telefone,
+          'Vira um botão que liga para a recepção. Ex.: (51) 3333-4444',
+        ),
+        campoContato(
+          'whatsapp',
+          'WhatsApp',
+          PADROES.telefone,
+          MENSAGENS.telefone,
+          'Vira um botão que abre a conversa. Ex.: (51) 99999-8888',
+        ),
+        campoContato(
+          'email',
+          'E-mail',
+          PADROES.email,
+          MENSAGENS.email,
+          'Vira um botão que abre o aplicativo de e-mail.',
+        ),
+        campoContato(
+          'ramal',
+          'Ramal interno',
+          PADROES.ramal,
+          MENSAGENS.ramal,
+          'Aparece só como texto (é discado do telefone do quarto). Ex.: 9',
+        ),
+      ],
+    } as CmsField,
+    {
+      name: 'urlPublica',
+      label: 'Endereço da página',
+      widget: 'string',
+      required: true,
+      pattern: [PADROES.urlHttps, MENSAGENS.urlHttps],
+      hint: 'É o endereço que vai no QR code. Só mude quando o subdomínio definitivo estiver pronto.',
+    } as CmsField,
+    {
+      name: 'enderecoDefinitivo',
+      label: 'Endereço definitivo',
+      widget: 'boolean',
+      default: false,
+      required: false,
+      hint: 'Desligado = endereço provisório: o gerador de QR code avisa que os QR codes impressos podem precisar ser trocados.',
+    } as CmsField,
+  ];
+}
+
 export function colecoes(): CmsCollection[] {
   return [
     {
@@ -148,6 +275,36 @@ export function colecoes(): CmsCollection[] {
           label: 'Catálogo do frigobar',
           file: 'content/catalog.json',
           fields: camposCatalogo(),
+        },
+      ],
+    },
+    {
+      name: 'identidade-visual',
+      label: 'Identidade visual',
+      description: 'Cores e fontes da página. O contraste das cores é conferido automaticamente.',
+      format: 'json',
+      editor: { preview: true },
+      files: [
+        {
+          name: 'identidade-visual',
+          label: 'Cores e fontes',
+          file: 'content/theme.json',
+          fields: camposIdentidadeVisual(),
+        },
+      ],
+    },
+    {
+      name: 'textos-contatos',
+      label: 'Textos e contatos',
+      description: 'Nome do hotel, logotipo, boas-vindas, informações, rodapé e contatos.',
+      format: 'json',
+      editor: { preview: true },
+      files: [
+        {
+          name: 'textos-contatos',
+          label: 'Textos, logotipo e contatos',
+          file: 'content/site.json',
+          fields: camposTextosContatos(),
         },
       ],
     },

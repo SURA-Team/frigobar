@@ -6,7 +6,6 @@ import { z } from 'zod';
 import { ETIQUETA_IDS } from '../icons/tags';
 import { ICONE_IDS } from '../icons/registry';
 import { FONTE_PADRAO_IDS } from '../theme/fonts';
-import { somenteDigitos } from './format';
 
 z.config(z.locales.ptBR());
 
@@ -18,9 +17,12 @@ export const PADROES = {
   imagem: /\.(jpe?g|png|webp)$/i,
   logo: /\.(jpe?g|png|webp|svg)$/i,
   fonte: /\.(woff2?|ttf|otf)$/i,
-  /** Somente dígitos, espaços, parênteses, hífen, ponto e "+". */
-  telefoneMascara: /^[\d\s()+.-]+$/,
+  /** 10 ou 11 dígitos (DDD + número), aceitando máscara com espaço, parênteses, hífen, ponto e "+". */
+  telefone: /^(?:[\s()+.-]*\d){10,11}[\s()+.-]*$/,
+  /** Verificação simples para o painel; o schema usa a validação completa de e-mail do Zod. */
+  email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
   ramal: /^\d{1,6}$/,
+  urlHttps: /^https:\/\/\S+$/,
   corHex: /^#[0-9A-Fa-f]{6}$/,
 } as const;
 
@@ -29,7 +31,9 @@ export const MENSAGENS = {
   logo: 'Use logotipo JPEG, PNG, WebP ou SVG.',
   fonte: 'Use arquivo de fonte WOFF2, WOFF, TTF ou OTF.',
   telefone: 'Informe DDD + número (10 ou 11 dígitos), ex.: (51) 99999-8888.',
+  email: 'Informe um e-mail válido, ex.: recepcao@hotel.com.br.',
   ramal: 'O ramal deve ter de 1 a 6 dígitos.',
+  urlHttps: 'Informe o endereço completo da página, começando com https://.',
   corHex: 'Use uma cor no formato #RRGGBB, ex.: #1F3A5F.',
 } as const;
 
@@ -59,16 +63,7 @@ function caminhoMidia(padrao: RegExp, mensagem: string) {
     .refine((v) => padrao.test(v), { message: mensagem });
 }
 
-const telefone = z
-  .string()
-  .refine((v) => PADROES.telefoneMascara.test(v), { message: MENSAGENS.telefone })
-  .refine(
-    (v) => {
-      const n = somenteDigitos(v).length;
-      return n >= 10 && n <= 11;
-    },
-    { message: MENSAGENS.telefone },
-  );
+const telefone = z.string().regex(PADROES.telefone, MENSAGENS.telefone);
 
 // ---------------------------------------------------------------------------
 // Site
@@ -77,7 +72,7 @@ const telefone = z
 export const contatosSchema = z.strictObject({
   telefone: opcional(telefone),
   whatsapp: opcional(telefone),
-  email: opcional(z.email('Informe um e-mail válido, ex.: recepcao@hotel.com.br.')),
+  email: opcional(z.email(MENSAGENS.email)),
   ramal: opcional(z.string().regex(PADROES.ramal, MENSAGENS.ramal)),
 });
 
