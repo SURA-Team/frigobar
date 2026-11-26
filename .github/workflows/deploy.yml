@@ -1,0 +1,54 @@
+# Publica no GitHub Pages a cada push na main (inclusive as publicações feitas pelo CMS).
+# O build valida o content/ real e otimiza as imagens; se falhar, o site continua na versão anterior.
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Uma publicação por vez, sem cancelar a que está em andamento.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+
+      - name: Build (validação + imagens + Vite)
+        run: npm run build
+        env:
+          PAGES_BASE_PATH: ${{ vars.PAGES_BASE_PATH || '/frigobar/' }}
+          VITE_CMS_AUTH_URL: ${{ vars.CMS_AUTH_URL }}
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

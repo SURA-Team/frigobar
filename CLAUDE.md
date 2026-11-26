@@ -27,6 +27,22 @@ cores, ícones, fotos) são editáveis por administradores.
 
 - Subdomínio da Andrade Hotéis ainda não definido: o build precisa suportar o base path
   `/frigobar/` (github.io) e a raiz (domínio próprio) por configuração.
-- Mecanismo de edição por administradores: a decidir no plano da primeira feature (opções
-  compatíveis com GitHub Pages: CMS baseado em Git como Sveltia/Decap CMS, ou serviço com
-  plano gratuito).
+
+## Decisões técnicas (feature 001 — ver `specs/001-pagina-publica-frigobar/plan.md`)
+
+- React **19** (o Decap CMS exige React 19 desde a 3.7.0; mesmo React no site e no preview do
+  CMS), TypeScript, Vite 7, Node 24 LTS.
+- O Zod não vai para o navegador da página pública: o plugin `scripts/vite-plugin-conteudo.ts`
+  valida e normaliza o conteúdo no build (módulo `virtual:conteudo`).
+- Conteúdo em `content/*.json`, schema Zod em `src/content/schema.ts`. Mudou o formato?
+  Atualize juntos schema, `src/admin/config.ts` e `contracts/content-files.md`.
+- Edição: Decap CMS em `/admin/` com `editorial_workflow` (rascunho = PR); login GitHub via
+  Cloudflare Worker OAuth. Preview do CMS usa os mesmos componentes da página pública.
+- Mídia com caminhos relativos (`uploads/...`) por causa do base path configurável.
+- Regras de formato (extensões, telefone, e-mail, ramal) ficam em `PADROES` no schema e são
+  importadas pela config do CMS: não duplique regex.
+- Testes nunca leem `content/` (editado pelo hotel): usam `tests/fixtures/` via
+  `FRIGOBAR_CONTENT_DIR` / `FRIGOBAR_UPLOADS_DIR`. O CI tem caminho rápido para PRs só de conteúdo.
+- CSP só na página pública e só no build (`scripts/vite-plugin-csp.ts`). JS da página pública
+  ≤ 100 KB gzip (`npm run size`).
+- Resultados de validação e pendências manuais: `specs/001-pagina-publica-frigobar/validacao.md`.

@@ -1,0 +1,14 @@
+{
+  "nomeHotel": "Andrade Hotéis",
+  "boasVindas": "Seja bem-vindo! Confira os itens do seu frigobar.",
+  "logo": "uploads/logo.svg",
+  "fotoCapa": "uploads/capa.jpg",
+  "informacoesGerais": "Os itens consumidos são cobrados no check-out.\nEm caso de dúvidas, fale com a recepção.",
+  "rodape": "Andrade Hotéis",
+  "contatos": {
+    "whatsapp": "(51) 99999-8888",
+    "ramal": "9"
+  },
+  "urlPublica": "https://sura-team.github.io/frigobar/",
+  "enderecoDefinitivo": false
+}

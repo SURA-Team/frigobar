@@ -20,3 +20,10 @@ coverage/
 .DS_Store
 Thumbs.db
 *.log
+
+# Gerados no build / testes
+src/generated/
+public/_img/
+test-results/
+playwright-report/
+.lighthouseci/

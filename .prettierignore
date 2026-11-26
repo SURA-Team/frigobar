@@ -1,0 +1,16 @@
+dist
+node_modules
+coverage
+src/generated
+public/_img
+public/uploads
+# Escritos pelo CMS: o formato é o do Decap, não o do Prettier.
+content
+test-results
+playwright-report
+.lighthouseci
+specs
+.specify
+.claude
+package-lock.json
+*.md

@@ -1,0 +1,473 @@
+/*
+ * Estilos base mobile-first. Usam apenas as variáveis do tema (src/theme/tokens.ts).
+ * Sem media queries de largura de viewport: o layout é fluido, para a pré-visualização em
+ * moldura de celular do CMS ser fiel.
+ */
+
+:root {
+  --cor-principal: #1f3a5f;
+  --cor-secundaria: #c8a96a;
+  --cor-fundo: #ffffff;
+  --cor-texto: #1a1a1a;
+  --cor-destaque: #c8a96a;
+  --cor-sobre-principal: #ffffff;
+  --cor-sobre-destaque: #000000;
+  --fonte-titulos: system-ui, sans-serif;
+  --fonte-textos: system-ui, sans-serif;
+  --raio: 12px;
+  --gutter: 16px;
+  --sombra: 0 1px 3px color-mix(in srgb, var(--cor-texto) 15%, transparent);
+  --borda: color-mix(in srgb, var(--cor-texto) 14%, transparent);
+  --texto-suave: color-mix(in srgb, var(--cor-texto) 78%, var(--cor-fundo));
+  color-scheme: light;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--cor-fundo);
+  color: var(--cor-texto);
+  font-family: var(--fonte-textos);
+  font-size: 1rem;
+  line-height: 1.5;
+  overflow-x: hidden;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--fonte-titulos);
+  line-height: 1.2;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+p {
+  margin: 0;
+}
+
+p,
+li,
+span,
+a,
+button {
+  overflow-wrap: anywhere;
+}
+
+img,
+svg {
+  max-width: 100%;
+  display: block;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+a {
+  color: var(--cor-principal);
+}
+
+:focus-visible {
+  outline: 3px solid var(--cor-principal);
+  outline-offset: 2px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.container {
+  width: 100%;
+  max-width: 640px;
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+/* ---------- Cabeçalho ---------- */
+
+.cabecalho {
+  position: relative;
+  background: var(--cor-principal);
+  color: var(--cor-sobre-principal);
+  padding-block: 24px;
+  overflow: hidden;
+}
+
+.cabecalho__capa {
+  position: absolute;
+  inset: 0;
+}
+
+.cabecalho__capa img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Véu sobre a foto de capa para garantir contraste do texto. */
+.cabecalho__capa::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: color-mix(in srgb, var(--cor-principal) 82%, transparent);
+}
+
+.cabecalho__conteudo {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+}
+
+.cabecalho__logo {
+  max-height: 72px;
+  width: auto;
+  max-width: 200px;
+  object-fit: contain;
+}
+
+.cabecalho__nome {
+  font-size: 1.5rem;
+}
+
+.cabecalho__boas-vindas {
+  font-size: 1rem;
+  max-width: 36ch;
+}
+
+/* ---------- Atalhos de categoria ---------- */
+
+.atalhos {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--cor-fundo);
+  border-bottom: 1px solid var(--borda);
+}
+
+.atalhos__lista {
+  display: flex;
+  gap: 8px;
+  margin: 0;
+  padding: 10px var(--gutter);
+  list-style: none;
+  overflow-x: auto;
+  scrollbar-width: none;
+  max-width: 640px;
+  margin-inline: auto;
+}
+
+.atalhos__lista::-webkit-scrollbar {
+  display: none;
+}
+
+.atalhos__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 8px 14px;
+  border: 1px solid var(--borda);
+  border-radius: 999px;
+  color: var(--cor-texto);
+  text-decoration: none;
+  white-space: nowrap;
+  overflow-wrap: normal;
+}
+
+.atalhos__link svg {
+  color: var(--cor-principal);
+  flex-shrink: 0;
+}
+
+/* ---------- Seções e cards ---------- */
+
+.catalogo {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  padding-block: 20px 8px;
+}
+
+.categoria {
+  scroll-margin-top: 72px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.categoria__titulo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.25rem;
+  color: var(--cor-principal);
+}
+
+.categoria__itens {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.aviso-alcool {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  padding: 10px 12px;
+  border-radius: var(--raio);
+  background: color-mix(in srgb, var(--cor-texto) 6%, var(--cor-fundo));
+  font-size: 0.875rem;
+}
+
+.aviso-alcool svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.card {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 72px 1fr;
+  gap: 12px;
+  align-items: start;
+  padding: 10px;
+  border: 1px solid var(--borda);
+  border-radius: var(--raio);
+  background: var(--cor-fundo);
+  text-align: left;
+  cursor: pointer;
+  box-shadow: var(--sombra);
+}
+
+.card__foto,
+.card__sem-foto {
+  width: 72px;
+  height: 72px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.card__sem-foto,
+.detalhe__sem-foto {
+  display: grid;
+  place-items: center;
+  background: color-mix(in srgb, var(--cor-principal) 10%, var(--cor-fundo));
+  color: var(--cor-principal);
+}
+
+.card__corpo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.card__topo {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  align-items: baseline;
+}
+
+.card__nome {
+  font-weight: 700;
+  font-family: var(--fonte-titulos);
+}
+
+.preco {
+  font-weight: 700;
+  white-space: nowrap;
+  overflow-wrap: normal;
+  color: var(--cor-principal);
+}
+
+.card__descricao {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  color: var(--texto-suave);
+  font-size: 0.9375rem;
+}
+
+.etiquetas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.etiqueta {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--cor-destaque);
+  color: var(--cor-sobre-destaque);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+/* ---------- Detalhe do item ---------- */
+
+.detalhe {
+  width: min(100% - 2 * var(--gutter), 560px);
+  max-height: calc(100dvh - 2 * var(--gutter));
+  padding: 0;
+  border: none;
+  border-radius: var(--raio);
+  background: var(--cor-fundo);
+  color: var(--cor-texto);
+  overflow: auto;
+}
+
+.detalhe::backdrop {
+  background: rgb(0 0 0 / 55%);
+}
+
+.detalhe__foto,
+.detalhe__sem-foto {
+  width: 100%;
+  /* height: auto faz o aspect-ratio valer mesmo com os atributos width/height do <img>. */
+  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+.detalhe__corpo {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+}
+
+.detalhe__topo {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: baseline;
+}
+
+.detalhe__nome {
+  font-size: 1.25rem;
+}
+
+.detalhe__descricao,
+.info__texto {
+  white-space: pre-line;
+}
+
+.botao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 10px 16px;
+  border: none;
+  border-radius: var(--raio);
+  background: var(--cor-principal);
+  color: var(--cor-sobre-principal);
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.botao--fechar {
+  align-self: stretch;
+}
+
+/* ---------- Informações, contatos, rodapé ---------- */
+
+.info,
+.contatos {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-block: 20px;
+  border-top: 1px solid var(--borda);
+}
+
+.info__titulo,
+.contatos__titulo {
+  font-size: 1.125rem;
+  color: var(--cor-principal);
+}
+
+.contatos__lista {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.contatos__lista .botao {
+  width: 100%;
+}
+
+.contatos__ramal {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+}
+
+.vazio {
+  padding-block: 32px;
+  text-align: center;
+  font-size: 1.0625rem;
+}
+
+.rodape {
+  padding-block: 20px 32px;
+  border-top: 1px solid var(--borda);
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--texto-suave);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
