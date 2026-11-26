@@ -358,6 +358,8 @@ a {
 .detalhe__foto,
 .detalhe__sem-foto {
   width: 100%;
+  /* height: auto faz o aspect-ratio valer mesmo com os atributos width/height do <img>. */
+  height: auto;
   aspect-ratio: 4 / 3;
   object-fit: cover;
 }
